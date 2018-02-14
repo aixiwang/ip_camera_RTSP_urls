@@ -1,0 +1,15 @@
+Onvif开发之服务端成功对接Rtsp视频流篇 
+标签： ONVIF 协议linux编程RTSP预览
+2014-01-07 19:05 12805人阅读 评论(26) 收藏 举报
+ 分类： 协议开发相关（6）  
+版权声明：本文为博主原创文章，未经博主允许不得转载。 http://blog.csdn.net/max_min_go/article/details/17964643
+前面篇介绍onvif服务端的发现功能，继续在之前的代码基础上完成一个RTSP流的工作，也就是客户端通过ONVIF协议来预览设备端
+在这个之前必须确定几个简单的条件
+1 设备端能被发现
+2 设备端支持RTSP协议，并且能够通过VLC进行正常的预览
+
+通过onvif协议设备需要做的几个基本事情：
+1  __tds__GetCapabilities获取设备能力
+2  __trt__GetProfiles获取设备的配置信息
+3  获取前段设备的视频编码和视频源的一些基本需要的信息
+4 __trt__GetStreamUri后去设备的URi，通过RTSP获取视频流
