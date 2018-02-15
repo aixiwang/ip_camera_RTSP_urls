@@ -1,0 +1,51 @@
+用Linux做路由器(以VirtualBox为例)：
+
+工具： 
+Virtualbox， 两台Ubuntu虚拟机
+
+步骤： 
+用一台Ubuntu做路由器，另外一台做客户端
+
+在用作路由器的Ubuntu上配置两个网卡，一个接外网，一个接内网 
+步骤： 
+a. 打开VirtualBox的网络配置； 
+b. 把网卡1设置为桥接模式，名称选择en0:以太网； 
+c. 增加一个网卡2，设置为内部网络模式，名称选择内部网络
+
+启动作为路由器的Ubuntu，设置网卡2的网址 
+步骤： 
+a. 启动Ubuntu 
+b. 打开Terminal 
+c. 查看两个网卡的名称：在打开的Terminal里执行ifconfig。一般网卡1的名称是eth0，网卡2的名称是eth1。 
+d. 设置网卡2的局域网IP地址： 
+假定网卡2的名称是eth2, 我们设置网卡2的IP为192.168.1.1
+
+在Terminal中执行下面这条命令： 
+ifconfig eth1 192.168.1.1 
+e. 在Terminal中执行ifconfig查看网卡2的IP地址是否为192.168.1.1
+
+打开Ubuntu中IP转发功能 
+a. 打开/etc/sysctl.conf 
+vi /etc/sysctl.conf 
+b. 在/etc/sysctl.conf中增加一行 
+net.ipv4.ip_forward = 1 
+c. 重启Ubuntu网络，在Terminal中执行下面这个命令 
+/etc/init.d/network restart 
+或者 
+service network restart
+
+用iptables设置IP转发 
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
+iptables -A FORWARD -i eth1 -j ACCEPT
+
+在VirtualBox中设置用作客户端的Ubuntu的网卡1的模式为内部网络，名称为内部网络
+
+启动用作客户端的Ubuntu，手动设置IP地址为192.168.1.2，路由或者网关的地址为用作路由器的Ubuntu的网卡2的地址192.168.1.1， DNS设置为8.8.8.8
+
+在客户端上打开浏览器测试是否可以连接到互联网
+
+在用作路由器的Ubuntu上连接VPN
+
+iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+
+在作为客户端的Ubuntu上打开浏览器，在百度里搜索IP，看是否你的IP已经变成VPN服务器的IP，如果是的话，证明设置成功。
